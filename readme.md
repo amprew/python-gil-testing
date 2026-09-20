@@ -20,13 +20,12 @@ In this post, we will break down:
 
 Before diving into Python specifics, let's establish a clear distinction between **Processes** and **Threads**.
 
-| 
-
-| **Feature** | **Process** | **Thread** | 
-| **Memory** | Own isolated memory space. | Shares memory space with parent process. | 
-| **Creation Cost** | High (expensive context switching & setup). | Low (lightweight, fast creation). | 
-| **Communication** | Requires Inter-Process Communication (IPC, queues, pipes). | Easy (reads/writes shared variables directly). | 
-| **Crash Impact** | If one crashes, others remain unaffected. | If one thread causes a fatal crash, the whole process dies. | 
+| **Feature** | **Process** | **Thread** |
+| --- | --- | --- |
+| **Memory** | Own isolated memory space. | Shares memory space with parent process. |
+| **Creation Cost** | High (expensive context switching & setup). | Low (lightweight, fast creation). |
+| **Communication** | Requires Inter-Process Communication (IPC, queues, pipes). | Easy (reads/writes shared variables directly). |
+| **Crash Impact** | If one crashes, others remain unaffected. | If one thread causes a fatal crash, the whole process dies. |
 
 * **Process**: Think of a process as a whole office building. It has its own resources, power supply, and mailroom. If Company A in Building A goes bankrupt, Company B in Building B keeps running.
 
@@ -34,7 +33,7 @@ Before diving into Python specifics, let's establish a clear distinction between
 
 ## 2. What is the Python GIL?
 
-The **Global Interpreter Lock (GIL)** is a mutual exclusion lock (mutex) used by CPython—the standard Python implementation—to prevent multiple native threads from executing Python bytecodes at the same time.
+The **Global Interpreter Lock (GIL)** is a mutual exclusion lock (mutex) used by CPython - the standard Python implementation - to prevent multiple native threads from executing Python bytecodes at the same time.
 
 ### Why did CPython have a GIL in the first place?
 
@@ -89,7 +88,7 @@ Thus, for web scraping, network servers, or file processors, `threading` (and `a
 
 ## 4. How Threading Gets Faster Without the GIL (Python 3.14)
 
-PEP 703 introduced **Free-Threaded Python**—a build of CPython that disables the GIL entirely. In Python 3.14, free-threading features improved thread safety guarantees, mimalloc memory allocator refinements, and optimized thread-safe reference counting (such as biased reference counting).
+PEP 703 introduced **Free-Threaded Python** - a build of CPython that disables the GIL entirely. In Python 3.14, free-threading features improved thread safety guarantees, mimalloc memory allocator refinements, and optimized thread-safe reference counting (such as biased reference counting).
 
 Without the GIL, true **parallel execution** becomes possible for CPU-bound tasks across multiple CPU cores:
 
@@ -146,9 +145,10 @@ python3.14 -X gil=0 cpu_benchmark.py
 
 ### Expected Results Matrix:
 
-| **Mode** | **GIL Status** | **Single-Threaded Time** | **Multi-Threaded Time (4 Threads)** | **Multi-Process Time (4 Workers)** | 
-| Standard Python | **Enabled** | \~2.0s | **\~2.0s - 2.2s** (No speedup due to GIL) | **\~0.6s** (True multi-core) | 
-| Free-Threaded Python | **Disabled** | \~2.1s | **\~0.6s** (True multi-core thread speedup!) | **\~0.6s** (True multi-core) | 
+| **Mode** | **GIL Status** | **Single-Threaded Time** | **Multi-Threaded Time (4 Threads)** | **Multi-Process Time (4 Workers)** |
+| --- | --- | --- | --- | --- |
+| Standard Python | **Enabled** | \~2.0s | **\~2.0s - 2.2s** (No speedup due to GIL) | **\~0.6s** (True multi-core) |
+| Free-Threaded Python | **Disabled** | \~2.1s | **\~0.6s** (True multi-core thread speedup!) | **\~0.6s** (True multi-core) |
 
 View actual results at: `./results.md`
 

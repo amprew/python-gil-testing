@@ -1,14 +1,3 @@
-To install:
-```
-PYTHON_CONFIGURE_OPTS="--disable-gil" pyenv install 3.14.0
-```
-
-Check
-```
-➜  gil-testing python -c "import sys; print(sys._is_gil_enabled())"      
-False
-```
-
 # Demystifying the Python GIL: Threads, Processes, and the Free-Threaded Future of Python 3.14
 
 If you have spent any time writing concurrent code in Python, you have likely run into a infamous three-letter acronym: **the GIL** (Global Interpreter Lock).
@@ -68,13 +57,12 @@ Here, `items` and `other` refer to the same list object. Python increments that 
 
 Even if your CPU has 16 or 32 physical cores, standard CPython under the GIL only lets **one thread run Python code at a time**.
 
-```
+```sh
 Single-threaded on multi-core CPU with GIL:
 [ Core 1 ]  -->  [ Thread 1 Runs ] ------------------------>
 [ Core 2 ]  -->  ( Idle / Waiting for GIL )
 [ Core 3 ]  -->  ( Idle / Waiting for GIL )
 [ Core 4 ]  -->  ( Idle / Waiting for GIL )
-
 ```
 
 ## 3. Why is Threading Useful *With* the GIL?
@@ -91,11 +79,10 @@ The answer lies in the distinction between **CPU-bound** and **I/O-bound** tasks
 
 When a Python thread initiates an I/O operation (like calling `requests.get()` or reading a file), CPython explicitly **releases the GIL**. While Thread A waits for the server to send data over the network, Thread B acquires the GIL and processes its work.
 
-```
+```sh
 I/O-bound concurrency under GIL:
 [ Thread 1 (Network) ]  --Releases GIL--> [ Waits for Response ] --Acquires GIL-->
 [ Thread 2 (Network) ]                    [ Executes Python ]    --Releases GIL-->
-
 ```
 
 Thus, for web scraping, network servers, or file processors, `threading` (and `asyncio`) provides massive speedups even with the GIL active!
@@ -106,13 +93,12 @@ PEP 703 introduced **Free-Threaded Python**—a build of CPython that disables t
 
 Without the GIL, true **parallel execution** becomes possible for CPU-bound tasks across multiple CPU cores:
 
-```
+```sh
 Multi-core execution WITHOUT the GIL (Python 3.14 Free-Threaded):
 [ Core 1 ]  -->  [ Thread 1 Runs CPU Work ]  ================>
 [ Core 2 ]  -->  [ Thread 2 Runs CPU Work ]  ================>
 [ Core 3 ]  -->  [ Thread 3 Runs CPU Work ]  ================>
 [ Core 4 ]  -->  [ Thread 4 Runs CPU Work ]  ================>
-
 ```
 
 When you scale CPU-bound tasks across multiple threads without the GIL, total execution time drops almost linearly with the number of physical cores available.
@@ -137,15 +123,25 @@ This script measures pure mathematical compute time across single-threaded, mult
 
 To test free-threaded execution locally, install a free-threaded Python binary (often named `python3.14t` or compiled with `--disable-gil`).
 
+To install:
+```sh
+PYTHON_CONFIGURE_OPTS="--disable-gil" pyenv install 3.14.0
+```
+
+Check
+```sh
+python -c "import sys; print(sys._is_gil_enabled())"      
+> False
+```
+
 You can toggle the GIL dynamically on supported builds:
 
-```
+```sh
 # Force GIL ON
 python3.14 -X gil=1 cpu_benchmark.py
 
 # Force GIL OFF (Free-threaded mode)
 python3.14 -X gil=0 cpu_benchmark.py
-
 ```
 
 ### Expected Results Matrix:

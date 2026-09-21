@@ -20,16 +20,16 @@ In this post, we will break down:
 
 Before diving into Python specifics, let's establish a clear distinction between **Processes** and **Threads**.
 
+* **Process**: Think of a process as a whole office building. It has its own resources, power supply, and mailroom. If Company A in Building A goes bankrupt, Company B in Building B keeps running.
+
+* **Thread**: Think of threads as workers inside that office building. They share the same desks, coffee machines, and whiteboards (memory). They can talk to each other instantly, but if someone accidentally burns the building down, everyone is affected.
+
 | **Feature** | **Process** | **Thread** |
 | --- | --- | --- |
 | **Memory** | Own isolated memory space. | Shares memory space with parent process. |
 | **Creation Cost** | High (expensive context switching & setup). | Low (lightweight, fast creation). |
 | **Communication** | Requires Inter-Process Communication (IPC, queues, pipes). | Easy (reads/writes shared variables directly). |
 | **Crash Impact** | If one crashes, others remain unaffected. | If one thread causes a fatal crash, the whole process dies. |
-
-* **Process**: Think of a process as a whole office building. It has its own resources, power supply, and mailroom. If Company A in Building A goes bankrupt, Company B in Building B keeps running.
-
-* **Thread**: Think of threads as workers inside that office building. They share the same desks, coffee machines, and whiteboards (memory). They can talk to each other instantly, but if someone accidentally burns the building down, everyone is affected.
 
 ## 2. What is the Python GIL?
 

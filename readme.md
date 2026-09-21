@@ -33,7 +33,7 @@ Before diving into Python specifics, let's establish a clear distinction between
 
 ## 2. What is the Python GIL?
 
-The **Global Interpreter Lock (GIL)** is a mutual exclusion lock (mutex) used by CPython - the standard Python implementation - to prevent multiple native threads from executing Python bytecodes at the same time.
+The **Global Interpreter Lock (GIL)** is a safety mechanism (mutex lock) in **CPython**, the standard implementation of Python. It allows only one thread at a time to execute Python code within a process, protecting Python's shared memory and objects. The trade-off is that CPU-bound threads cannot execute Python code in parallel when the GIL is enabled.
 
 ### Why did CPython have a GIL in the first place?
 
